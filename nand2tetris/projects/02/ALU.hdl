@@ -42,27 +42,54 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
-   And16(a=x, b=, out=newX);
-   Mux16(a=x, b=newX, sel=zx, out=zeroX);
+// STAGE ONE:
+   // If zx is true, output a zero to the next stage
+   Mux16(a=x, b=false, sel=zx, out=zeroX);
 
-   Not16(a=zeroX, out=notX);
+   // If nx is true, NOT the previous x value and output to next stage
+   Not16(in=zeroX, out=notX);
    Mux16(a=zeroX, b=notX, sel=nx, out=calcX);
 
-
-
-   And16(a=y, b=, out=newY);
-   Mux16(a=y, b=newY, sel=zy, out=zeroY);
-   Not16(a=zeroY, out=notY);
+   // If zy is true, output a zero to the next stage. Then, if ny is true,
+   // output the NOT of the current x to the next stage
+   Mux16(a=y, b=false, sel=zy, out=zeroY);
+   Not16(in=zeroY, out=notY);
    Mux16(a=zeroY, b=notY, sel=ny, out=calcY);
 
+// STAGE TWO: 
+   // If f is true, output the sum of x and y. If it is false, output the AND of x and y
    And16(a=calcX, b=calcY, out=XandY);
    Add16(a=calcX, b=calcY, out=XplusY);
    Mux16(a=XandY, b=XplusY, sel=f, out=calcOut);
-
+//STAGE THREE:
+   // If no is true, output the negation of the answer in the previous stage. ng is the
+   // MSB of the output bus
    Not16(in=calcOut, out=notOut);
-   Mux16(a=calcOut, b=notOut, sel=no, out=out);
+   Mux16(a=calcOut, b=notOut, sel=no, out=out, out[0]=tempOut0,
+   out[1]=tempOut1, out[2]=tempOut2, out[3]=tempOut3, out[4]=tempOut4,
+   out[5]=tempOut5, out[6]=tempOut6, out[7]=tempOut7, out[8]=tempOut8,
+   out[9]=tempOut9, out[10]=tempOut10, out[11]=tempOut11, out[12]=tempOut12,
+   out[13]=tempOut13, out[14]=tempOut14, out[15]=tempOut15, out[15] = ng);
 
-   
+   // Or all output values. The NOT of the OR of the entire bus is zr
+   Or(a=tempOut0, b=tempOut1, out=check1);
+   Or(a=tempOut2, b=tempOut3, out=check2);
+   Or(a=tempOut4, b=tempOut5, out=check3);
+   Or(a=tempOut6, b=tempOut7, out=check4);
+   Or(a=tempOut8, b=tempOut9, out=check5);
+   Or(a=tempOut10, b=tempOut11, out=check6);
+   Or(a=tempOut12, b=tempOut13, out=check7);
+   Or(a=tempOut14, b=tempOut15, out=check8);
+
+   Or(a=check1, b=check2, out=nextcheck1);
+   Or(a=check3, b=check4, out=nextcheck2);
+   Or(a=check5, b=check6, out=nextcheck3);
+   Or(a=check7, b=check8, out=nextcheck4);
+
+   Or(a=nextcheck1, b=nextcheck2, out=finalCheck1);
+   Or(a=nextcheck3, b=nextcheck4, out=finalCheck2);
+
+   Or(a=finalCheck1, b=finalCheck2, out=notzr);
+   Not(in=notzr, out=zr);
 
 }
