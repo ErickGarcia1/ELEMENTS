@@ -15,12 +15,9 @@
     @offset
     M = 0   // Set the offset to 0
     @8192
-    D = A
+    D = A   // Set the counter value 
     @counter
     M = D
-    @set_color
-    M = 0
-
 
 (LOOP)  // Main loop
     @KBD
@@ -29,49 +26,51 @@
     @SET_WHITE
     D;JEQ   // If there is no keypress, jump to where the screen is set to white
 
-// Find the screen, and change the value 
+// Find the screen, and set it to black
 (SET_BLACK) 
-    @SCREEN
+    @SCREEN     // Set the D register to the screen register
     D = A
+    // Add the offset into the address of the screen and increment the offset
     @offset
     D = D + M
     M = M + 1
+    // Set the new address to SCREEN + offset, and set the pixels to black
     A = D
     M = -1
+    // Compare the offset with the counter value. If they are equal, exit the loop
     @offset
     D = M
     @counter
     D = D - M
     @END_SET
-    D;JEQ
+    D - M;JEQ
 
     @SET_BLACK    // When all pixels are set to black, jump to end of the set function
     0;JMP
 
 (SET_WHITE)
-    @SCREEN
+    @SCREEN     // Set the D register to the screen register
     D = A
+    // Add the offset into the address of the screen and increment the offset
     @offset
     D = D + M
     M = M + 1
+    // Set the new address to SCREEN + offset, and set the pixels to white
     A = D
     M = 0
+    // Compare the offset with the counter value. If they are equal, exit the loop
     @offset
     D = M
     @counter
     D = D - M
     @END_SET
-    D;JEQ
+    D - M;JEQ
 
     @SET_WHITE
     0;JMP
 
 (END_SET)
     @offset
-    M = 0   // Set the offset to 0
-    @8192
-    D = A
-    @counter
-    M = D
+    M = 0   // Reset the offset to 0
     @LOOP
-    0;JMP
+    0;JMP   // Loop back
