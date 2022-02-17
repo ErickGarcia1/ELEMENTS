@@ -42,10 +42,10 @@
     D = M
     @counter
     D = D - M
-    @END_SET
+    @END_SET    // If all pixels are set to black, jump to end of the set function
     D - M;JEQ
 
-    @SET_BLACK    // When all pixels are set to black, jump to end of the set function
+    @SET_BLACK
     0;JMP
 
 (SET_WHITE)
@@ -63,7 +63,7 @@
     D = M
     @counter
     D = D - M
-    @END_SET
+    @END_SET    // If all pixels are set to black, jump to end of the set function
     D - M;JEQ
 
     @SET_WHITE

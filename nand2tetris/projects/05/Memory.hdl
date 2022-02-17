@@ -27,13 +27,13 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
-    // Check if we are accessing screen or the rest of ram.
-    And(a=address[14], b=address[13], out=key);
+    And(a=address[14], b=address[13], out=key);     // Check if we are accessing screen or the rest of ram.
+
     // If accessing keyboard, set the load value input to false.
     // Else, set to load value
     Not(in=key, out=notkey);
     And(a=load, b=notkey, out=loadcheck);
+    
     // Send load value to RAM or screen based on addressing
     DMux(in=loadcheck, sel=address[14], a=loadRam, b=loadScreen);
     

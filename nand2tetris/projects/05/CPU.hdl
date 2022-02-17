@@ -70,34 +70,35 @@ CHIP CPU {
     // that goes into register A
     Not(in=instruction[15], out=notOpCode);
     Mux16(a=ALUout, b=instruction, sel=notOpCode, out=mux1out);
+
     // A register is loaded depending on the opcode of the instruction
     // and the corresponding destination bit
     Or(a=notOpCode, b=instruction[5], out=Aload);
     ARegister(in=mux1out, load=Aload, out[0..14]=addressM, out=Aout);
-    // A value is loaded into y depending on the a bit
-    Mux16(a=Aout, b=inM, sel=instruction[12], out=mux2out);
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=mux2out);     // A value is loaded into y depending on the a bit
+
     // D register is updated depending on the corresponding destination bit
     And(a=instruction[4], b=instruction[15], out=Dload);
     DRegister(in=ALUout, load=Dload, out=Dout);
+    
     // ALU is fed the control bits and operations are performed
     ALU(x=Dout, y=mux2out, zx=instruction[11], nx=instruction[10],
     zy=instruction[9], ny=instruction[8], f=instruction[7], 
     no=instruction[6], out=ALUout, out=outM, zr=ALUzero, ng=ALUless);
-    // Conditions to load value in A to PC, depends on the zero and less than outputs
-    // of the ALU
-    And(a=instruction[1], b=ALUzero, out=JEQ);
+    And(a=instruction[1], b=ALUzero, out=JEQ);                  // Load value A into PC depending on zero and less outputs of ALU
+
     // Set ALUmore bit. If the output of the ALU is not zero and not less than zero,
-    // it is greater than zero
+    // it is greater than zero, which sets ALUmore
     Not(in=ALUless, out=temp1);
     Xor(a=ALUzero, b=temp1, out=ALUmore);
     And(a=instruction[0], b=ALUmore, out=JGT);
     And(a=instruction[2], b=ALUless, out=JLT);
     Or(a=JEQ, b=JGT, out=jump1);
     Or(a=jump1, b=JLT, out=jump2);
-    // If opcode is not 1, nothing should be loaded into PC
-    And(a=jump2, b=instruction[15], out=PCload);
-    // PC is either loaded or not, and incrementing input is always set to 1
-    PC(in=Aout, load=PCload, inc=true, reset=reset, out[0..14]=pc);
+
+    // Load the PC or let it increment?
+    And(a=jump2, b=instruction[15], out=PCload);                // If opcode is not 1, nothing should be loaded into PC
+    PC(in=Aout, load=PCload, inc=true, reset=reset, out[0..14]=pc); // PC is either loaded or not, and incrementing input is always set to 1
     // writeM output depends on the corresponding destination bit
     // assuming the instruction is a C-type (opcode is 1)
     And(a=instruction[15], b=instruction[3], out=writeM);
