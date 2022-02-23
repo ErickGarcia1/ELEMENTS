@@ -27,7 +27,6 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
     // Check if we are accessing screen or the rest of ram.
     And(a=address[14], b=address[13], out=key);
     // If accessing keyboard, set the load value input to false.
