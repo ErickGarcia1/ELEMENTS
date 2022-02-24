@@ -1,13 +1,18 @@
 use std::fs::File;
-use std::io::prelude::*;
+use std::io::{BufRead, BufReader};
 
 fn main() {
-    let mut file = File::open("testfile.asm").expect("Can't open file!");
+    let file = File::open("testfile.asm").unwrap(); //.expect("Can't open file!");
 
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)
-        .expect("Cannot read file :(");
+    // let mut contents = String::new();
+    let reader = BufReader::new(file);
 
-    println!("File contents:\n\n{}",contents);
+    for (index, line) in reader.lines().enumerate() {
+        let line = line.unwrap();
+        
+        println!("{}\t{}", index + 1, line);
+    }
+
+    // println!("File contents:\n\n{}",contents);
 
 }
