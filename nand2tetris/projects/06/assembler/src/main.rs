@@ -1,6 +1,7 @@
-use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::fs::OpenOptions;
+use std::io::{Write, BufRead, BufReader};
 use std::collections::HashMap;
+use std::path::Path;
 
 fn main() {
     let mut symbol_table= HashMap::from([
@@ -36,30 +37,45 @@ fn main() {
         ("JMP", 7),
     ]);
 
-    // println!("{}", symbol_table.entry("R15"));
-    for (symbol, address) in &symbol_table {
-        println!("{} -> {}", symbol, address);
-    }
+    // Open .asm file and create a .hack file with the same name
+    let mut file_name = String::from("testfile.asm");
 
-    let s = String::from("foo bar");
-    // s.remove_matches(" ");
-    println!("{}", s);
-    // assert_eq!("foo", s.as_str());
+    let file_in = {
+        OpenOptions::new()
+        .read(true)
+        .write(false)
+        .create(false)
+        .open(&file_name)
+        .expect(&format!("Could not open {}!", &file_name))
+    };
 
-    let file = File::open("testfile.asm").unwrap(); //.expect("Can't open file!");
+    println!("Opening {}...", &file_name);
 
-    // let mut contents = String::new();
-    let reader = BufReader::new(file);
+    file_name = file_name.replace(".asm", ".hack");
+
+    let mut file_out =  {
+        OpenOptions::new()
+        .read(false)
+        .write(true)
+        .create(true)
+        .open(&file_name)
+        .expect(&format!("Could not create or open {}!", &file_name))
+    };
+    
+
+    // Create a reading buffer for input file
+    let reader = BufReader::new(file_in);
 
     for (index, line) in reader.lines().enumerate() {
-        let mut line = line.unwrap();
+        let line = line.unwrap();
         if line.contains("//") {
             println!("Comment");
-            let mut slashes: (&str, &str) = line.split("//").collect();
-            line = slashes.first();
-            println!("split output: {:?}",slashes);
-        } else {
-            println!("No comment");
+            let slashes: Vec<&str> = line.split("//").collect();
+            let new_line = slashes[0].to_string();
+            if !new_line.is_empty() {
+                // write!(&file_out, "Bruh\n");
+            }
+
         }
         
         println!("{}\t{}", index + 1, line);
