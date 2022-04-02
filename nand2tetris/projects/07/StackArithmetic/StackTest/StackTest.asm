@@ -43,8 +43,8 @@ M=M+1
 @END.0
 0;JMP
 (true.0)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -92,8 +92,8 @@ M=M+1
 @END.1
 0;JMP
 (true.1)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -141,8 +141,8 @@ M=M+1
 @END.2
 0;JMP
 (true.2)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -190,8 +190,8 @@ M=M+1
 @END.3
 0;JMP
 (true.3)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -239,8 +239,8 @@ M=M+1
 @END.4
 0;JMP
 (true.4)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -288,8 +288,8 @@ M=M+1
 @END.5
 0;JMP
 (true.5)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -337,8 +337,8 @@ M=M+1
 @END.6
 0;JMP
 (true.6)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -386,8 +386,8 @@ M=M+1
 @END.7
 0;JMP
 (true.7)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -435,8 +435,8 @@ M=M+1
 @END.8
 0;JMP
 (true.8)
-@32767
-D=A
+@0
+D=A-1
 @SP
 A=M
 M=D
@@ -578,4 +578,3 @@ A=M
 M=D
 @SP
 M=M+1
-// **Sample command**
